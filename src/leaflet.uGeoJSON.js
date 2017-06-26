@@ -2,6 +2,7 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
     options: {
       debug: false,
       light: true,
+      method: "POST",
       usebbox: false,
       endpoint: "-1",
       parameters: {},
@@ -40,36 +41,46 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
       this._requests.shift().abort();
     }
 
-    var postData = new FormData();
-
-    for(var k in this.options.parameters)
-    {
-      if(this.options.parameters[k].scope != undefined)
-      {
-        postData.append(k,this.options.parameters[k].scope[k]);
-      }
-      else
-      {
-        postData.append(k,this.options.parameters[k]);
-      }
-    }
-
     var bounds = this._map.getBounds();
 
-    if ( this.options.usebbox ) {
-      postData.append('bbox', bounds.toBBoxString());
+    if (this.options.method == 'POST') {
+        var postData = new FormData();
 
-    } else {
-      postData.append('south', bounds.getSouth());
-      postData.append('north', bounds.getNorth());
-      postData.append('east', bounds.getEast());
-      postData.append('west', bounds.getWest());
-    }
-    postData.append('zoom', this._map.getZoom());
+        for(var k in this.options.parameters)
+        {
+            if(this.options.parameters[k].scope != undefined)
+            {
+                postData.append(k,this.options.parameters[k].scope[k]);
+            }
+            else
+            {
+                postData.append(k,this.options.parameters[k]);
+            }
+        }
+
+
+        if ( this.options.usebbox ) {
+            postData.append('bbox', bounds.toBBoxString());
+
+        } else {
+            postData.append('south', bounds.getSouth());
+            postData.append('north', bounds.getNorth());
+            postData.append('east', bounds.getEast());
+            postData.append('west', bounds.getWest());
+        }
+        postData.append('zoom', this._map.getZoom());
+    } 
 
     var self = this;
     var request = new XMLHttpRequest();
-    request.open("POST", this.options.endpoint, true);
+    
+    if (this.options.method == 'POST') {
+        request.open("POST", this.options.endpoint +'bbox='+bounds.toBBoxString()+'&bbsrid='+'4326', true);
+    }
+    if (this.options.method == 'GET') {
+        request.open("GET", this.options.endpoint +'bbox='+bounds.toBBoxString()+'&bbsrid='+'4326', true);
+    }
+
     request.onload = function() {
       for(var i in self._requests)
       {
@@ -86,7 +97,8 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
     };
 
     this._requests.push(request);
-    request.send(postData);
+    //request.send(postData);
+    request.send(null);
   },
 
   onAdd: function (map) {
