@@ -38,8 +38,10 @@ L.UGeoJSONLayer = L.GeoJSON.extend({
         if (this.options.debug) {
             console.debug("zoom level too high: skip load");
         }
+        this.clearLayers();
         return false;
     }
+
     if (this.options.debug) {
       console.debug("load Data");
     }
