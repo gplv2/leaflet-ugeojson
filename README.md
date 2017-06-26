@@ -31,7 +31,28 @@ var map = new L.Map('map').addLayer(osm).setView(new L.LatLng(52.265, 10.524), 1
 L.uGeoJSONLayer({ endpoint:"URL TO SERVER"
                 }).addTo(map);
 ```
+or 
 
+```javascript
+...
+var attr_osm = 'Map data &copy; <a href="http://openstreetmap.org/">OpenStreetMap</a> contributors',
+var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+
+var map = new L.Map('map').addLayer(osm).setView(new L.LatLng(52.265, 10.524), 14);
+
+var nwr_geojson = L.uGeoJSONLayer(
+            {   endpoint: "https://data.grbosm.site/wr?", 
+                usebbox: true , 
+                method: "GET", 
+                maxRequests: 3, 
+                parameters: { bbsrid: '4326'}
+            }
+var overlays = { "Wegenregister GEOJSON": nwr_geojson };
+
+L.control.layers(overlays).addTo(map);
+...
+);
+```
 ## What are the options?
 As this layer is based on the GeoJSON layer, you can use all the original options.
 
@@ -40,6 +61,7 @@ Here are the additionnal options you can specify as an argument of L.uGeoJSONLay
 
 * **debug**: display debug log in the console or not. Default : false,
 * **light**: remove or not data after updating. Default : true,
+* **method**: 'POST' or 'GET'. Default 'POST',
 
 * **maxRequests**: the number of parallel requests allowed. Default : 5,
 * **pollTime**: the time in ms between 2 updates without moving. Default : 0 (ie no automatic update), 
@@ -47,6 +69,7 @@ Here are the additionnal options you can specify as an argument of L.uGeoJSONLay
 
 * **parameters**: additional parameters to the post requests,
 * **once** : allow to load the layer only once. Default : false,
+* **minzoom** : Minimum zoom level before layer gets loaded. Default : 15,
 * **after** : a function that is run after the data is rendered, taking the GeoJSON data object as parameter. Default : none,
 
 ## How to use the "parameters" option?

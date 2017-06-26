@@ -8,8 +8,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/benjaminvadant/leaflet-ugeojson"
+    "url": "https://github.com/gplv2/leaflet-ugeojson"
   },
-  "author": "Benjamin VADANT",
+  "author": "Glenn Plas(fork)",
   "license": "MIT"
 }
